@@ -4,7 +4,7 @@ If you have the old asset files of Munchkin Complete Collection V 1.18 or Munchk
 
 1. [Have Python installed if you haven't already](https://www.python.org/downloads/).
 2. [Download this project (this link points to a zip of it)](https://github.com/FVMF/TTS_munchkin/archive/refs/heads/main.zip).
-3. Unzip the file downloaded at step 2 to the Mods directory of Tabletop Simulator
+3. Unzip the contents of the file downloaded in step 2 to the Mods subdirectory of Tabletop Simulator
    - For Windows: %USERPROFILE%\Documents\My Games\Tabletop Simulator\Mods\
    - For MacOS: ~/Library/Tabletop Simulator/Mods/
    - For Linux: ~/.local/share/Tabletop Simulator/Mods/
