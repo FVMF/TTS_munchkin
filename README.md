@@ -1,6 +1,6 @@
 # TTS_munchkin
 
-If you have the old asset files of Munchkin Complete Collection V 1.18 or Munchkin Complete Collection V 1.18.1 and you want to have all those files removed, then you can follow the steps below in order to do so. The script should work for Windows (tested on Windows 11), Linux (tested on Ubuntu), and MacOS (tested on Sequoia)
+If you have old asset files of Munchkin Complete Collection on your computer and you want to have all those files removed, then you can follow the steps below in order to do so. The script should work for Windows (tested on Windows 11), Linux (tested on Ubuntu), and MacOS (tested on Sequoia)
 
 1. [Have Python installed if you haven't already](https://www.python.org/downloads/)
 2. [Download this project (this link points to a zip of it)](https://github.com/FVMF/TTS_munchkin/archive/refs/heads/main.zip)
