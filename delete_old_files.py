@@ -2,9 +2,9 @@ import os
 import sys
 
 def delete_files_from_txt(file_with_paths):
-    replaceCharacter = false # For Windows
+    replaceCharacter = False # For Windows
     if sys.platform == 'linux' or sys.platform == "linux2" or sys.platform == "darwin": # For linux and Mac OS
-        replaceCharacter = true
+        replaceCharacter = True
     # Open the txt file and read all lines (file paths)
     with open(file_with_paths, 'r') as file:
         # Iterate through each file path in the txt file
@@ -13,7 +13,7 @@ def delete_files_from_txt(file_with_paths):
             file_path = line.strip()
 
             if replaceCharacter:
-                file_path = file_path.replace("\", "/")
+                file_path = file_path.replace("\\", "/")
             
             # Check if the file exists before attempting to delete
             if os.path.exists(file_path):
