@@ -1,0 +1,85 @@
+<Defaults>
+   <Panel class="Window" width="500" height="500" color="#00000060" allowDragging="True" returnToOriginalPositionWhenReleased="false" rectAlignment="MiddleRight" outline="#000000"/>
+   <Panel class="Topbar" height="20" rectAlignment="UpperCenter" color="#713B17" outline="#00008B"/>
+   <Text class="WindowTitle" text="Choose your settings for Munchkin" fontsize="18" height="20" fontstyle="Bold" rectaligment="UpperCenter" color="#FFFFFF"/>
+   <Toggle class="Side Deck" toggleWidth="30.0" toggleHeight="30.0" textColor="#FFFFFF" fillColor="#000000" onValueChanged="toggleSideDecks"/>
+   <Toggle class="Rules" toggleWidth="30.0" toggleHeight="30.0" textColor="#FFFFFF" fillColor="#000000"/>
+</Defaults>
+
+<Panel
+class="Window"
+id="Window" 
+>
+   <Panel
+   class="Topbar"
+   id="Topbar">
+      <Text class="WindowTitle"/>
+   </Panel>
+   <Text
+      Text="To start the game, place the Door and Treasure deck from at least one &#xA;Core deck in the places in the middle of the table labeled Door Deck &#xA;and Treasure Deck. You can add the Door and Treasure decks from &#xA;one or multiple (mini-)expansions if you like.&#xA;&#xA;When everyone is seated, click the ´Start the game´ button.&#xA;&#xA;With the checkboxes below, you can choose which side decks to use &#xA;(if any), and which special rules you want to enable (if any).&#xA;&#xA;IMPORTANT: this mod uses onTurnEnd to automate the game. Use &#xA;the built in end turn button to change turns."
+      id="Instructions"
+      color="#FFFFFF"
+      alignment="MiddleLeft"
+      offsetXY="15 130"
+      fontstyle="Bold">
+   </Text>
+   <Text
+      Text="Play with these side decks:"
+      id="Txt Side Decks"
+      color="#FFFFFF"
+      offsetXY="-140 -10"
+      fontstyle="Bold">
+   </Text>
+   <Toggle
+      class="Side Deck"
+      id="Bosses" 
+      offsetXY="-150 -40">
+      Bosses
+   </Toggle>
+   <Toggle
+      class="Side Deck"
+      id="Fairy Dust" 
+      offsetXY="-150 -80">
+      Fairy Dust
+   </Toggle>
+   <Toggle
+      class="Side Deck"
+      id="Munchkinomicon" 
+      offsetXY="-150 -120">
+      Munchkinomicon
+   </Toggle>
+   <Toggle
+      class="Side Deck"
+      id="Side Quests" 
+      offsetXY="-150 -160">
+      Side Quests
+   </Toggle>
+   <Text
+      Text="Play with these rules:"
+      id="Txt Rules"
+      color="#FFFFFF"
+      offsetXY="140 -10"
+      fontstyle="Bold">
+   </Text>
+   <Toggle
+      class="Rules"
+      id="Epic Munchkin" 
+      offsetXY="150 -40"
+      onValueChanged="toggleEpicTokens">
+      Epic Munchkin
+   </Toggle>
+   <Toggle
+      class="Rules"
+      id="Munchkin Meeples" 
+      offsetXY="150 -80"
+      onValueChanged="toggleMeeples">
+      Munchkin Meeples
+   </Toggle>
+   <Toggle
+      class="Rules"
+      id="Faster play" 
+      offsetXY="150 -120"
+      onValueChanged="toggleFasterPlay">
+      Faster Play Rules
+   </Toggle>
+</Panel>

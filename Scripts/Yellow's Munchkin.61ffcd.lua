@@ -1,0 +1,2 @@
+--Yellow Figurine
+color = 'Yellow'
