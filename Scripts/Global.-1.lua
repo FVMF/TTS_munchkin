@@ -41,7 +41,8 @@ function onload()
                   ['Bosses'] = getObjectFromGUID('4959c7'), ['Bosses Discard'] = getObjectFromGUID('9a1441'),
                   ['Fairy Dust'] = getObjectFromGUID('7f109e'), ['Fairy Dust Discard'] = getObjectFromGUID('9e40f9'),
                   ['Munchkinomicon'] = getObjectFromGUID('f2f504'), ['Munchkinomicon Discard'] = getObjectFromGUID('a63226'),
-                  ['Side Quests'] = getObjectFromGUID('4436f4'), ['Side Quests Discard'] = getObjectFromGUID('e4adb2')  
+                  ['Side Quests'] = getObjectFromGUID('4436f4'), ['Side Quests Discard'] = getObjectFromGUID('e4adb2'),
+                  ['Side Quests 2'] = getObjectFromGUID('4436f4'), ['Side Quests 2 Discard'] = getObjectFromGUID('e4adb2')  
                 }
 
     valueCpCounters = { ['Red'] = 0, ['Orange'] = 0, ['Yellow'] = 0, ['Green'] = 0, ['Blue'] = 0, ['Purple'] = 0 }
@@ -60,11 +61,11 @@ function onload()
     epicBool = { ['Red'] = false, ['Orange'] = false, ['Yellow'] = false,
                  ['Green'] = false, ['Blue'] = false, ['Purple'] = false } 
   
-    sideDeckBoxes = { ['Bosses'] = getObjectFromGUID('510c92'), ['Fairy Dust'] = getObjectFromGUID('9cd897'), ['Munchkinomicon'] = getObjectFromGUID('377762'), ['Side Quests'] = getObjectFromGUID('5e11e9') }
+    sideDeckBoxes = { ['Bosses'] = getObjectFromGUID('510c92'), ['Fairy Dust'] = getObjectFromGUID('9cd897'), ['Munchkinomicon'] = getObjectFromGUID('377762'), ['Side Quests'] = getObjectFromGUID('5e11e9'), ['Side Quests 2'] = getObjectFromGUID('53af45') }
 
-    sideDeckObjects = { ['Bosses'] = '', ['Fairy Dust'] = '', ['Munchkinomicon'] = '', ['Side Quests'] = '' }
+    sideDeckObjects = { ['Bosses'] = '', ['Fairy Dust'] = '', ['Munchkinomicon'] = '', ['Side Quests'] = '', ['Side Quests 2'] = '' }
 
-    sideDeckTags = { 'Bosses', 'Fairy Dust', 'Munchkinomicon', 'Side Quests' }
+    sideDeckTags = { 'Bosses', 'Fairy Dust', 'Munchkinomicon', 'Side Quests', 'Side Quests 2' }
 
     textObjects = { getObjectFromGUID('42be31'), getObjectFromGUID('7e6656'), getObjectFromGUID('d9aa73'), getObjectFromGUID('9d7cc8'), getObjectFromGUID('6f3de2'),
                     getObjectFromGUID('00dbc9'), getObjectFromGUID('d2eea9'), getObjectFromGUID('3f44f2'), getObjectFromGUID('be9c7e'), getObjectFromGUID('7b1d51') }
@@ -145,7 +146,8 @@ function initializeObjects()
 
 end --initializeObjects
 
-function hideObject(object, boolHide)
+function hideObject(object, boolHide)
+
   if object ~= nil then --make sure the object exists
     objectPos = object.getPosition()
     if boolHide and objectPos[2] > 0 then --Hide object when shown at the moment
@@ -238,7 +240,8 @@ function onObjectEnterScriptingZone(zone, enter_object)
   end
 end --onObjectEnterScriptingZone
 
-function updateDeckDescription(deck)
+function updateDeckDescription(deck)
+
   for _, zone in ipairs(deck.getZones()) do
     current_zone = getObjectFromGUID(zone.guid)
     if findIndexOfValueInTable(equipmentBonusZones, current_zone) != nil then
@@ -283,7 +286,8 @@ function updateZoneCounter(zone)
 end --updateZoneCounter
 
 function onObjectEnterContainer(object, enter_object)
-  if object.type == 'Deck' then
+  if object.type == 'Deck' then
+
     updateDeckDescription(object)  
   end
   for _, zone in ipairs(object.getZones()) do
@@ -382,9 +386,9 @@ function validDescription(string)
   return true
 end --validDescription
 
-function moveCardsAboveDeck(object, deck, distance)
-  object.setPosition(deck.getPosition():setAt('y', distance))
-end --moveCardsAboveDeck
+function moveCardsAboveDestination(object, destination, distance)
+  object.setPosition(destination.getPosition():setAt('y', distance))
+end --moveCardsAboveDestination
 
 function cleanUp()
   local cleanUpZones = {'Monster Support', 'Player Support'}
@@ -399,7 +403,7 @@ function cleanUp()
             local discardName = string.format('%s Discard', tagName)
             local discardZone = deckZones[discardName]
             objectsToMove[i].setRotation(discardZone.getRotation())
-            moveCardsAboveDeck(objectsToMove[i], discardZone, 10 + i/2)
+            moveCardsAboveDestination(objectsToMove[i], discardZone, 10 + i/2)
           end
         end
       end
@@ -409,7 +413,6 @@ end --cleanUp
 
 function onPlayerTurn()
   cleanUp()
-    
 end --onPlayerTurn
 
 tick_count = 0
@@ -472,6 +475,21 @@ function toggleEpicTokens(player, isOn)
   end
 end --toggleEpicTokens
 
+function findDeck(zone)
+  local objects = zone.getObjects()
+  for _, item in ipairs(objects) do
+    if item.tag == 'Deck' then  
+        return item
+    end
+  end
+  for _, item in ipairs(objects) do
+    if item.tag == 'Card' then
+        return item
+    end
+  end
+  return nil
+end --findDeck
+
 function toggleSideDecks(player, isOn, id)
   box = sideDeckBoxes[id]
   deckName = string.format('%s Deck', id)
@@ -482,15 +500,54 @@ function toggleSideDecks(player, isOn, id)
         sideDeckObjects[id] = deck
       end
     end
-    if deckName == 'Side Quests Deck' then
+    -- Rotate all side quests deck properly
+    if string.match(deckName, 'Side Quests') then
       deck.setRotation({0, 90, 180})
     else
       deck.setRotation({0, 270, 180})
     end
     deck.setPosition(deckZones[id].getPosition())
   else
-    sideDeckBoxes[id].putObject(sideDeckObjects[id])
-    sideDeckObjects[id] = ''
+    -- Handle situation where both Side Quests decks are on the table and one should return to its box
+    if string.match(deckName, 'Side Quests') then
+      deck = findDeck(deckZones[id])
+      tagToCompare = deck.getObjects()[1].tags[1]
+      multipleDecks = false
+      for _, card in ipairs(deck.getObjects()) do
+        if card.tags[1] ~= tagToCompare then
+          multipleDecks = true
+        end
+      end
+      if multipleDecks == true then
+        if id == 'Side Quests' then otherId = 'Side Quests 2' end
+        if id == 'Side Quests 2' then otherId = 'Side Quests' end
+        allCardsInTheDeck = deck.getObjects()
+        for i = #allCardsInTheDeck, 1, -1 do  
+          card = allCardsInTheDeck[i]
+          if has_value(card.tags, id) then
+            -- Table of takeObject is zero indexed
+            deck.takeObject({index = i-1, smooth = false, position = deckZones[id .. ' Discard'].getPosition()})
+          end
+        end
+        Wait.time(
+          function()
+            deck1 = findDeck(deckZones[id .. ' Discard'])
+            deck1.setName(id..' Deck')
+            sideDeckBoxes[id].putObject(deck1)
+            sideDeckObjects[id] = ''
+            deck2 = findDeck(deckZones[otherId])
+            deck2.setName(otherId..' Deck')
+            sideDeckObjects[otherId] = deck2
+          end,
+          0.4)
+      else
+         sideDeckBoxes[id].putObject(sideDeckObjects[id])
+        sideDeckObjects[id] = ''
+      end
+    else
+      sideDeckBoxes[id].putObject(sideDeckObjects[id])
+      sideDeckObjects[id] = ''
+    end
   end
 end --toggleSideDecks
 
@@ -568,7 +625,8 @@ function onObjectHover(playerColor, object)
   end
 end --onObjectHover
 
-function onPlayerChangeColor(color)
+function onPlayerChangeColor(color)
+
   if color ~= 'Grey' and color ~= 'Black' then --when choosing a seat, make all relevant object visible
     playerColor = color      
     playerObjects = { playerFigs[playerColor], playerAssistFigs[playerColor], playerDice[playerColor], sexTokens[playerColor], sexCards[playerColor],
@@ -592,7 +650,8 @@ function onPlayerChangeColor(color)
         end
         objectName = string.gsub(objectName, subStringToChange, steamName)
         playerObject.setName(objectName)
-      end
+      end
+
     end
     if meepleMode then
       for _, meeple in pairs(meeples[playerColor]) do

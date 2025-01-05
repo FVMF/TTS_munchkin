@@ -54,6 +54,12 @@ id="Window"
       offsetXY="-150 -160">
       Side Quests
    </Toggle>
+      <Toggle
+      class="Side Deck"
+      id="Side Quests 2" 
+      offsetXY="-150 -200">
+      Side Quests 2
+   </Toggle>
    <Text
       Text="Play with these rules:"
       id="Txt Rules"
