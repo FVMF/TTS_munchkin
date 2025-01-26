@@ -1,10 +1,18 @@
+pos = {3.09, 1.13, 7.49}
+rot = {0, 180, 0}
+
 -- Only level
-function onLoad()
-   equipBonusCounters = Global.getTable('equipBonusCounters')
-   playerColors = Global.getTable('playerColors')
-   ownColor = ''
-   pos = self.getPosition()
-   rot = self.getRotation()
+function onLoad(script_state)
+   local state = JSON.decode(script_state)
+   if state == '' or state == nil then
+      equipBonusCounters = Global.getTable('equipBonusCounters')
+      playerColors = Global.getTable('playerColors')
+      ownColor = ''
+   else
+      equipBonusCounters = {['Red'] = getObjectFromGUID(state.guids.red), ['Orange'] = getObjectFromGUID(state.guids.orange), ['Yellow'] = getObjectFromGUID(state.guids.yellow), ['Green'] = getObjectFromGUID(state.guids.green), ['Blue'] = getObjectFromGUID(state.guids.blue), ['Purple'] = getObjectFromGUID(state.guids.purple), ['Monster Support'] = getObjectFromGUID(state.guids.monster_support), ['Player Support'] = getObjectFromGUID(state.guids.player_support)}
+      playerColors = state.playerColors
+      ownColor = state.ownColor 
+   end
 end --onLoad
 
 function onPlayerTurn()
@@ -21,7 +29,7 @@ function has_value (tab, val)
        return true
      end
    end
-   return false
+   return false
 end --has_value
 
 function onPickUp(playerColor)
@@ -35,3 +43,10 @@ function onPickUp(playerColor)
       self.setDescription(equipBonus)
    end
 end --onPickUp
+
+function onSave()
+   local state = {guids = 
+      {red = equipBonusCounters['Red'].guid, orange = equipBonusCounters['Orange'].guid, yellow = equipBonusCounters['Yellow'].guid, green = equipBonusCounters['Green'].guid, blue = equipBonusCounters['Blue'].guid, purple = equipBonusCounters['Purple'].guid, monster_support = equipBonusCounters['Monster Support'].guid, player_support = equipBonusCounters['Player Support'].guid},
+      playerColors = playerColors, ownColor = ownColor}
+   return JSON.encode(state)
+end --onSave
