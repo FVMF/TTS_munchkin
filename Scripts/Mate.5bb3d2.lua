@@ -2,15 +2,14 @@
 VISIBLE_ONCE = false
 castVisible = true
 RADIUS = 4
+pos = {-5.10, 0.97, 7.50}
+rot = {0, 180, 0}
 
 function onLoad(script_state)
    local state = JSON.decode(script_state) 
    if state == '' or state == nil then
       zoneToUpdate = Global.getTable('equipmentBonusZones')['Monster Support']
       currentValue = 0
-      pos = {-5.10, 0.97, 7.51}
-      rot = {0, 180, 0}
-      return JSON.encode(state)
    else
       zoneToUpdate = getObjectFromGUID(state.zoneToUpdateGUID)
       currentValue = state.currentValue
@@ -21,8 +20,8 @@ end --onLoad
 
 function onPlayerTurn()
    self.setDescription(0)
-   self.setPositionSmooth({-5.10, 0.97, 7.51}, false, false)
-   self.setRotationSmooth({0, 180, 0}, false, false)
+   self.setPositionSmooth(pos, false, false)
+   self.setRotationSmooth(rot, false, false)
    currentValue = 0
    objectInCorrectZone = false
 end --onPlayerTurn
@@ -55,11 +54,9 @@ function getValueOfCardsInArea()
       valueOfCards = 0
       hitlist = Physics.cast({
            origin       = physicsPosition,
-
            direction    = {0,-1,0},
            type         = 2,
            size         = {RADIUS, RADIUS, RADIUS},
-
            max_distance = 0,
            debug        = castVisible,
            })
