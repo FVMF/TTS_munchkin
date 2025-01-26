@@ -1,22 +1,31 @@
 -- Mate
 VISIBLE_ONCE = false
+castVisible = true
 RADIUS = 4
 
-function onLoad()
-   zoneToUpdate = Global.getTable('equipmentBonusZones')['Monster Support']
-   previousValue = 0
-   castVisible = true
-   pos = self.getPosition()
-   rot = self.getRotation()
-end --function onLoad
+function onLoad(script_state)
+   local state = JSON.decode(script_state) 
+   if state == '' or state == nil then
+      zoneToUpdate = Global.getTable('equipmentBonusZones')['Monster Support']
+      currentValue = 0
+      pos = {-5.10, 0.97, 7.51}
+      rot = {0, 180, 0}
+      return JSON.encode(state)
+   else
+      zoneToUpdate = getObjectFromGUID(state.zoneToUpdateGUID)
+      currentValue = state.currentValue
+      objectInCorrectZone = state.objectInCorrectZone
+      physicsPosition = state.physicsPosition
+   end
+end --onLoad
 
 function onPlayerTurn()
    self.setDescription(0)
-   self.setPositionSmooth(pos, false, false)
-   self.setRotationSmooth(rot, false, false)
-   previousValue = 0
+   self.setPositionSmooth({-5.10, 0.97, 7.51}, false, false)
+   self.setRotationSmooth({0, 180, 0}, false, false)
+   currentValue = 0
    objectInCorrectZone = false
-end --function onPlayerTurn
+end --onPlayerTurn
 
 function onDrop()
    local zoneTable = {}
@@ -34,21 +43,23 @@ function onDrop()
    else
      objectInCorrectZone = false
    end
-end --function onDrop
+end --onDrop
 
 function onPickUp()
    showCast = true
    self.setDescription('')
-end --function onPickUp
+end --onPickUp
 
 function getValueOfCardsInArea()
    if objectInCorrectZone then
       valueOfCards = 0
       hitlist = Physics.cast({
-           origin       = physicsPosition,
+           origin       = physicsPosition,
+
            direction    = {0,-1,0},
            type         = 2,
-           size         = {RADIUS, RADIUS, RADIUS},
+           size         = {RADIUS, RADIUS, RADIUS},
+
            max_distance = 0,
            debug        = castVisible,
            })
@@ -64,10 +75,16 @@ function getValueOfCardsInArea()
          end
       end
    end
-   if currentValue ~= previousValue then
+   if currentValue ~= valueOfCards then
+      currentValue = valueOfCards
       self.setDescription(valueOfCards)
       Global.call('updateZoneCounter', zoneToUpdate) 
    end
-end --function getValueOfCards
+end --getValueOfCards
+
+function onSave()
+   local state = {zoneToUpdateGUID = zoneToUpdate.guid, currentValue = currentValue, objectInCorrectZone = objectInCorrectZone, physicsPosition = physicsPosition}
+   return JSON.encode(state)
+end --onSave
 
 Wait.time(getValueOfCardsInArea, 0.5, -1)
