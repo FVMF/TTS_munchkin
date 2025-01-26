@@ -73,7 +73,7 @@ function updateValue()
       end
     end
   end
-end --updateValue
+end --onFixedUpdate
 
 function onSave()
   local state = {
